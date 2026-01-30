@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "HOH Sui Wallet",
+  "version": "1.0.0",
+  "description": "A Sui wallet extension with HOH design and Cetus integration",
+  "permissions": ["storage", "activeTab", "tabs", "windows"],
+  "background": {
+    "service_worker": "assets/background.js"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Open Wallet"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["assets/content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

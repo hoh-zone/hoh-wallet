@@ -1,0 +1,37 @@
+
+> sui-wallet-extension@0.0.0 build
+> tsc -b && vite build
+
+src/lib/chartService.ts(90,115): error TS1005: ')' expected.
+src/lib/chartService.ts(91,110): error TS1005: ')' expected.
+src/lib/chartService.ts(92,110): error TS1005: ')' expected.
+src/pages/Home.tsx(176,9): error TS1005: ')' expected.
+src/pages/Home.tsx(177,8): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/Home.tsx(179,10): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/pages/Home.tsx(319,14): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/Home.tsx(360,5): error TS1005: ')' expected.
+src/pages/Home.tsx(362,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/Home.tsx(362,3): error TS1005: '</' expected.
+src/pages/NetworkSwitch.tsx(237,13): error TS1005: ')' expected.
+src/pages/NetworkSwitch.tsx(252,11): error TS1128: Declaration or statement expected.
+src/pages/NetworkSwitch.tsx(255,10): error TS1005: ',' expected.
+src/pages/NetworkSwitch.tsx(255,11): error TS1128: Declaration or statement expected.
+src/pages/NetworkSwitch.tsx(256,7): error TS1128: Declaration or statement expected.
+src/pages/NetworkSwitch.tsx(261,18): error TS1136: Property assignment expected.
+src/pages/NetworkSwitch.tsx(261,21): error TS1005: ';' expected.
+src/pages/NetworkSwitch.tsx(268,10): error TS1128: Declaration or statement expected.
+src/pages/NetworkSwitch.tsx(352,7): error TS1128: Declaration or statement expected.
+src/pages/NetworkSwitch.tsx(447,5): error TS1005: ')' expected.
+src/pages/NetworkSwitch.tsx(448,3): error TS1109: Expression expected.
+src/pages/Send.tsx(355,8): error TS17008: JSX element 'BottomSheet' has no corresponding closing tag.
+src/pages/Send.tsx(378,17): error TS2657: JSX expressions must have one parent element.
+src/pages/Send.tsx(397,21): error TS17002: Expected corresponding JSX closing tag for 'button'.
+src/pages/Send.tsx(399,17): error TS1005: ')' expected.
+src/pages/Send.tsx(399,19): error TS17002: Expected corresponding JSX closing tag for 'div'.
+src/pages/Send.tsx(400,16): error TS1005: '}' expected.
+src/pages/Send.tsx(400,17): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/Send.tsx(413,12): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/pages/Send.tsx(415,7): error TS1005: ')' expected.
+src/pages/Send.tsx(416,5): error TS1109: Expression expected.
+src/pages/Send.tsx(417,3): error TS1109: Expression expected.
+src/pages/Send.tsx(418,1): error TS1128: Declaration or statement expected.
