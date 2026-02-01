@@ -44,6 +44,13 @@ const translations: Translations = {
   'confirm': { en: 'Confirm', zh: '确认' },
   'save': { en: 'Save', zh: '保存' },
   'delete': { en: 'Delete', zh: '删除' },
+
+  // SuiNS
+  'suins_name': { en: 'SuiNS Name', zh: 'SuiNS 域名' },
+  'recipient_address_or_suins': { en: 'Recipient Address or SuiNS Name', zh: '接收地址或 SuiNS 域名' },
+  'resolving_suins': { en: 'Resolving SuiNS name...', zh: '正在解析 SuiNS 域名...' },
+  'suins_not_found': { en: 'SuiNS name not found', zh: 'SuiNS 域名未找到' },
+  'suins_short_format': { en: '@name equals name.sui', zh: '@name 等于 name.sui' },
 };
 
 export const t = (key: string): string => {

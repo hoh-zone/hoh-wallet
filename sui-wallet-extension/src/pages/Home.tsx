@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { useWalletStore } from '../store/walletStore';
-import { Send, QrCode, ChevronDown, Wallet, ArrowRightLeft, History, TrendingUp, Copy } from 'lucide-react';
+import { Send, QrCode, ChevronDown, Wallet, ArrowRightLeft, History, TrendingUp, Copy, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getShortAddress } from '../lib/utils';
 import { priceService } from '../lib/priceService';
 import { chartService, PriceChartData } from '../lib/chartService';
 import { MoreMenu } from '../components/MoreMenu';
+import { SuiNSName, suiNS } from '../lib/suins';
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -14,12 +15,26 @@ export const Home = () => {
   const [activeTab, setActiveTab] = useState<'coin' | 'defi' | 'nft'>('coin');
   const [totalValue, setTotalValue] = useState<number>(0);
   const [chartData, setChartData] = useState<PriceChartData | null>(null);
+  const [walletNames, setWalletNames] = useState<Map<string, SuiNSName>>(new Map());
   const currentWalletRef = useRef<HTMLDivElement>(null);
   const walletListRef = useRef<HTMLDivElement>(null);
   const selectorRef = useRef<HTMLDivElement>(null);
 
   const wallets = getAllWallets();
   const currentWallet = wallets.find(w => w.id === currentWalletId);
+
+  // 批量查询钱包地址的 SuiNS 域名
+  useEffect(() => {
+    const lookupWalletNames = async () => {
+      if (wallets.length === 0) return;
+      
+      const addresses = wallets.map(w => w.address);
+      const names = await suiNS.batchReverseLookup(addresses);
+      setWalletNames(names);
+    };
+
+    lookupWalletNames();
+  }, [wallets]);
 
   // Close wallet selector when clicking outside
   useEffect(() => {
@@ -129,32 +144,42 @@ export const Home = () => {
 
             {showWalletSelector && (
               <div ref={walletListRef} className="absolute top-full left-0 mt-2 bg-hoh-card rounded-xl shadow-2xl border border-gray-700 min-w-48 z-50 max-h-80 overflow-y-auto">
-                {wallets.map(wallet => (
-                  <div
-                    key={wallet.id}
-                    ref={wallet.id === currentWalletId ? currentWalletRef : null}
-                    className={`px-3 py-2.5 cursor-pointer transition-all first:rounded-t-lg last:rounded-b-lg border-b border-gray-800 last:border-b-0 hover:bg-gray-700 ${
-                      wallet.id === currentWalletId ? 'bg-hoh-green/10 text-hoh-green' : ''
-                    }`}
-                    onClick={() => handleSwitchWallet(wallet.id)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{wallet.alias}</div>
-                        <div className="text-xs text-gray-500 truncate">{getShortAddress(wallet.address)}</div>
+                {wallets.map(wallet => {
+                  const suinsName = walletNames.get(wallet.address.toLowerCase());
+                  return (
+                    <div
+                      key={wallet.id}
+                      ref={wallet.id === currentWalletId ? currentWalletRef : null}
+                      className={`px-3 py-2.5 cursor-pointer transition-all first:rounded-t-lg last:rounded-b-lg border-b border-gray-800 last:border-b-0 hover:bg-gray-700 ${
+                        wallet.id === currentWalletId ? 'bg-hoh-green/10 text-hoh-green' : ''
+                      }`}
+                      onClick={() => handleSwitchWallet(wallet.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium truncate">{wallet.alias}</div>
+                          {suinsName ? (
+                            <div className="flex items-center gap-1 text-xs text-hoh-green">
+                              <Globe size={10} />
+                              <span className="truncate">{suinsName.name}</span>
+                            </div>
+                          ) : (
+                            <div className="text-xs text-gray-500 truncate">{getShortAddress(wallet.address)}</div>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopyAddress(wallet.address);
+                          }}
+                          className="p-1 hover:bg-gray-600 rounded-md transition-colors flex-shrink-0 ml-2"
+                        >
+                          <Copy size={12} />
+                        </button>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCopyAddress(wallet.address);
-                        }}
-                        className="p-1 hover:bg-gray-600 rounded-md transition-colors flex-shrink-0 ml-2"
-                      >
-                        <Copy size={12} />
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {wallets.length === 0 && (
                   <div className="px-3 py-4 text-center text-gray-500 text-sm">
                     No wallets
@@ -184,6 +209,15 @@ export const Home = () => {
               </div>
               {totalValue > 0 && (
                 <div className="text-base text-gray-400">${priceService.formatPrice(totalValue)}</div>
+              )}
+              {/* 显示当前钱包的 SuiNS 域名 */}
+              {currentWallet && walletNames.get(currentWallet.address.toLowerCase()) && (
+                <div className="flex items-center justify-center gap-1.5 mt-2">
+                  <Globe size={14} className="text-hoh-green" />
+                  <span className="text-sm text-hoh-green font-medium">
+                    {walletNames.get(currentWallet.address.toLowerCase())?.name}
+                  </span>
+                </div>
               )}
             </>
           )}

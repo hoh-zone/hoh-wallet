@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, ArrowDownLeft, RefreshCw, ExternalLink, Download, Calendar } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, ArrowDownLeft, RefreshCw, ExternalLink, Download, Calendar, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTransactionStore } from '../store/transactionStore';
 import { useWalletStore } from '../store/walletStore';
+import { suiNS, SuiNSName } from '../lib/suins';
 
 export const HistoryPage = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export const HistoryPage = () => {
   const [filter, setFilter] = useState<'all' | 'send' | 'receive' | 'swap'>('all');
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [dateFilter, setDateFilter] = useState<'all' | 'week' | 'month' | 'year'>('all');
+  const [addressNames, setAddressNames] = useState<Map<string, SuiNSName>>(new Map());
 
   const wallets = getAllWallets();
   const currentWallet = wallets.find(w => w.id === currentWalletId);
@@ -20,6 +22,23 @@ export const HistoryPage = () => {
       loadTransactions(currentWallet.address);
     }
   }, [currentWallet, loadTransactions]);
+
+  // 查询交易地址的 SuiNS 域名
+  useEffect(() => {
+    const lookupAddressNames = async () => {
+      if (transactions.length === 0) return;
+
+      const addresses = transactions
+        .map(tx => tx.type === 'receive' ? tx.from : tx.to)
+        .filter(Boolean);
+
+      const uniqueAddresses = [...new Set(addresses)];
+      const names = await suiNS.batchReverseLookup(uniqueAddresses);
+      setAddressNames(names);
+    };
+
+    lookupAddressNames();
+  }, [transactions]);
 
   const handleRefresh = () => {
     if (currentWallet) {
@@ -68,7 +87,27 @@ export const HistoryPage = () => {
 
   const formatAddress = (address: string) => {
     if (!address) return '';
+    
+    // 检查是否有 SuiNS 域名
+    const suinsName = addressNames.get(address.toLowerCase());
+    if (suinsName) {
+      return suinsName.name;
+    }
+    
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatAddressWithIcon = (address: string) => {
+    const suinsName = addressNames.get(address.toLowerCase());
+    if (suinsName) {
+      return (
+        <span className="flex items-center gap-1 text-hoh-green">
+          <Globe size={12} />
+          <span>{suinsName.name}</span>
+        </span>
+      );
+    }
+    return <span className="text-gray-400">{formatAddress(address)}</span>;
   };
 
   const formatDate = (timestamp: number) => {
@@ -215,15 +254,15 @@ export const HistoryPage = () => {
                     <div className="w-10 h-10 bg-hoh-hover rounded-full flex items-center justify-center">
                       {getTransactionIcon(tx.type)}
                     </div>
-                    <div className="flex-1">
+                      <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <span className="font-medium capitalize">{tx.type}</span>
                         <span className={`text-xs ${getStatusColor(tx.status)}`}>
                           {getStatusText(tx.status)}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-400 mt-1">
-                        {formatAddress(tx.type === 'receive' ? tx.from : tx.to)}
+                      <div className="text-sm mt-1">
+                        {formatAddressWithIcon(tx.type === 'receive' ? tx.from : tx.to)}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         {formatDate(tx.timestamp)}

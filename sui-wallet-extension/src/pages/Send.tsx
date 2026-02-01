@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWalletStore } from '../store/walletStore';
-import { useContactsStore } from '../store/contactsStore';
-import { ArrowLeft, AlertCircle, CheckCircle, Zap, Users, ChevronRight } from 'lucide-react';
+import { useContactsStore, Contact } from '../store/contactsStore';
+import { ArrowLeft, AlertCircle, CheckCircle, Zap, Users, ChevronRight, Globe, X } from 'lucide-react';
 import { getShortAddress } from '../lib/utils';
 import { getSymbolByAddress, TOKENS } from '../lib/tokens';
 import { tokenTransferService } from '../lib/tokenTransferService';
 import { gasService, GasEstimate } from '../lib/gasService';
 import { BottomSheet } from '../components/BottomSheet';
+import { suiNS, SuiNSName } from '../lib/suins';
 
 export const SendPage = () => {
   const location = useLocation();
@@ -21,13 +22,17 @@ export const SendPage = () => {
   const tokenBalance = tokenBalances.find(t => t.info.address === tokenAddress || t.symbol === selectedToken);
 
   const [recipient, setRecipient] = useState('');
+  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
+  const [resolvedName, setResolvedName] = useState<SuiNSName | null>(null);
+  const [isResolving, setIsResolving] = useState(false);
   const [amount, setAmount] = useState('');
-  const [error, _setError] = useState('');
+  const [error] = useState('');
   const [estimatedGas, setEstimatedGas] = useState<string>('0');
   const [gasLevel, setGasLevel] = useState<'slow' | 'average' | 'fast'>('average');
   const [gasEstimate, setGasEstimate] = useState<GasEstimate | null>(null);
   const [showContactSelector, setShowContactSelector] = useState(false);
-  const [txDigest, _setTxDigest] = useState<string>('');
+  const [txDigest] = useState<string>('');
+  const resolveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const wallets = getAllWallets();
   const currentWallet = wallets.find(w => w.id === currentWalletId);
@@ -40,7 +45,8 @@ export const SendPage = () => {
   // Estimate gas when amount changes
   useEffect(() => {
     const estimateGas = async () => {
-      if (!amount || !recipient || !currentWallet) return;
+      const actualRecipient = resolvedAddress || recipient;
+      if (!amount || !actualRecipient || !currentWallet) return;
 
       try {
         const estimate = await gasService.estimateTransactionFee(
@@ -51,7 +57,7 @@ export const SendPage = () => {
         setGasEstimate(estimate);
         
         const gasEstimateDetail = await tokenTransferService.estimateGas({
-          recipient,
+          recipient: actualRecipient,
           amount: parseFloat(amount),
           tokenAddress,
           decimals: tokenInfo.decimals,
@@ -65,11 +71,90 @@ export const SendPage = () => {
     };
 
     estimateGas();
-  }, [amount, recipient, gasLevel, currentWallet, tokenAddress, tokenInfo.decimals]);
+  }, [amount, resolvedAddress, recipient, gasLevel, currentWallet, tokenAddress, tokenInfo.decimals]);
 
   const handleMaxAmount = () => {
     const maxAmount = Math.max(0, currentBalance - 0.001);
     setAmount(maxAmount.toFixed(4));
+  };
+
+  // SuiNS 域名解析（支持正向解析和反向解析）
+  const resolveSuiNSName = useCallback(async (input: string) => {
+    if (!input.trim()) {
+      setResolvedAddress(null);
+      setResolvedName(null);
+      return;
+    }
+
+    setIsResolving(true);
+    try {
+      // 检查是否是 SuiNS 域名格式（包括 @ 格式）
+      if (suiNS.isSuiNSName(input)) {
+        // 正向解析：域名 -> 地址
+        const address = await suiNS.resolveName(input);
+        if (address) {
+          setResolvedAddress(address);
+          // 使用规范化后的域名显示（将 @example 显示为 example.sui）
+          setResolvedName({
+            name: suiNS.normalizeName(input),
+            address: address,
+          });
+        } else {
+          setResolvedAddress(null);
+          setResolvedName(null);
+        }
+      } else if (input.trim().startsWith('0x') && input.trim().length >= 42) {
+        // 反向解析：地址 -> 域名（地址格式：0x... 且长度足够）
+        const normalizedAddress = input.trim().toLowerCase();
+        setResolvedAddress(normalizedAddress);
+        
+        // 尝试反向查找域名
+        const nameResult = await suiNS.reverseLookup(normalizedAddress);
+        if (nameResult) {
+          setResolvedName(nameResult);
+        } else {
+          setResolvedName(null);
+        }
+      } else {
+        // 既不是域名也不是有效地址，直接返回输入
+        setResolvedAddress(input.trim());
+        setResolvedName(null);
+      }
+    } catch (err) {
+      console.error('Failed to resolve SuiNS:', err);
+      // 出错时使用原始输入作为地址
+      setResolvedAddress(input.trim());
+      setResolvedName(null);
+    } finally {
+      setIsResolving(false);
+    }
+  }, []);
+
+  // 延迟解析域名
+  useEffect(() => {
+    if (resolveTimeoutRef.current) {
+      clearTimeout(resolveTimeoutRef.current);
+    }
+
+    if (recipient.trim()) {
+      resolveTimeoutRef.current = setTimeout(() => {
+        resolveSuiNSName(recipient);
+      }, 500);
+    } else {
+      setResolvedAddress(null);
+      setResolvedName(null);
+    }
+
+    return () => {
+      if (resolveTimeoutRef.current) {
+        clearTimeout(resolveTimeoutRef.current);
+      }
+    };
+  }, [recipient, resolveSuiNSName]);
+
+  // 处理地址输入
+  const handleRecipientChange = (value: string) => {
+    setRecipient(value);
   };
 
   if (false) {
@@ -106,7 +191,7 @@ export const SendPage = () => {
     );
   }
 
-  const handleSelectContact = (contact: any) => {
+  const handleSelectContact = (contact: Contact) => {
     setRecipient(contact.address);
     setShowContactSelector(false);
   };
@@ -134,15 +219,25 @@ export const SendPage = () => {
 
       {/* Recipient Address */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium">Recipient Address</label>
+        <label className="block text-sm font-medium">Recipient Address or SuiNS Name</label>
         <div className="flex space-x-2">
-          <textarea
-            placeholder="0x..."
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            rows={3}
-            className="flex-1 bg-hoh-card text-white px-4 py-3 rounded-xl border border-hoh-border focus:border-hoh-green focus:outline-none text-base leading-relaxed resize-none"
-          />
+          <div className="flex-1 relative">
+            <textarea
+              placeholder="0x... or example.sui or @example"
+              value={recipient}
+              onChange={(e) => handleRecipientChange(e.target.value)}
+              rows={3}
+              className="w-full bg-hoh-card text-white px-4 py-3 rounded-xl border border-hoh-border focus:border-hoh-green focus:outline-none text-base leading-relaxed resize-none pr-10"
+            />
+            {recipient.trim() && (
+              <button
+                onClick={() => handleRecipientChange('')}
+                className="absolute right-3 top-3 p-1 hover:bg-gray-600 rounded-full transition-colors"
+              >
+                <X size={16} className="text-gray-400" />
+              </button>
+            )}
+          </div>
           <button
             onClick={() => setShowContactSelector(true)}
             className="p-3 bg-hoh-card border border-hoh-border rounded-xl hover:bg-gray-700"
@@ -151,6 +246,33 @@ export const SendPage = () => {
             <Users size={20} />
           </button>
         </div>
+
+        {/* SuiNS 解析结果 */}
+        {isResolving && (
+          <div className="flex items-center gap-2 text-sm text-hoh-green">
+            <div className="animate-spin w-4 h-4 border-2 border-hoh-green border-t-transparent rounded-full" />
+            <span>Resolving SuiNS name...</span>
+          </div>
+        )}
+
+        {resolvedName && !isResolving && (
+          <div className="bg-hoh-green/10 border border-hoh-green/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Globe size={16} className="text-hoh-green" />
+              <span className="text-sm font-medium text-hoh-green">{resolvedName.name}</span>
+            </div>
+            <div className="text-xs text-gray-400 font-mono">
+              {getShortAddress(resolvedName.address)}
+            </div>
+          </div>
+        )}
+
+        {/* 只在输入是域名格式但解析失败时显示错误 */}
+        {recipient.trim() && suiNS.isSuiNSName(recipient) && !resolvedAddress && !isResolving && (
+          <div className="text-sm text-red-400">
+            SuiNS name not found
+          </div>
+        )}
       </div>
 
       {/* Amount */}
@@ -248,10 +370,17 @@ export const SendPage = () => {
 
       {/* Send Button */}
       <button
-        disabled={!recipient || !amount || !!error}
+        disabled={!recipient || !amount || !!error || isResolving || (suiNS.isSuiNSName(recipient) && !resolvedAddress)}
         className="w-full bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
       >
-        <span>Send {selectedToken}</span>
+        {isResolving ? (
+          <>
+            <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full" />
+            <span>Resolving...</span>
+          </>
+        ) : (
+          <span>Send {selectedToken}</span>
+        )}
       </button>
 
       {/* Contact Selector Bottom Sheet */}
@@ -277,7 +406,7 @@ export const SendPage = () => {
             </div>
           ) : (
             <div className="space-y-2 max-h-80 overflow-y-auto">
-              {contacts.slice(0, 10).map((contact: any) => (
+              {contacts.slice(0, 10).map((contact: Contact) => (
                 <button
                   key={contact.id}
                   onClick={() => handleSelectContact(contact)}
