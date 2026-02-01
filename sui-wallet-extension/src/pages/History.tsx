@@ -167,7 +167,7 @@ export const HistoryPage = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
           {[
             { id: 'all' as const, label: 'All' },
             { id: 'send' as const, label: 'Sent' },
@@ -177,7 +177,7 @@ export const HistoryPage = () => {
             <button
               key={tab.id}
               onClick={() => setFilter(tab.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 filter === tab.id
                   ? 'bg-hoh-green text-black'
                   : 'bg-hoh-card text-gray-400 hover:text-white'
@@ -189,21 +189,21 @@ export const HistoryPage = () => {
         </div>
       </div>
 
-      {/* Transaction List */}
-      <div className="flex-1 overflow-y-auto p-4 pb-6">
-        {isLoading ? (
-          <div className="text-center text-gray-400 py-20">
-            <RefreshCw size={32} className="mx-auto mb-3 animate-spin" />
-            <p>Loading transactions...</p>
-          </div>
-        ) : filteredTransactions.length === 0 ? (
-          <div className="text-center text-gray-400 py-20">
-            <div className="text-4xl mb-3">📭</div>
-            <p>No transactions yet</p>
-            <p className="text-sm mt-1">Your transaction history will appear here</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
+        {/* Transaction List */}
+        <div className="flex-1 overflow-y-auto p-4 pb-6">
+          {isLoading ? (
+            <div className="text-center text-gray-400 py-20">
+              <RefreshCw size={32} className="mx-auto mb-3 animate-spin" />
+              <p className="text-sm">Loading transactions...</p>
+            </div>
+          ) : filteredTransactions.length === 0 ? (
+            <div className="text-center text-gray-400 py-20">
+              <div className="text-4xl mb-3">📭</div>
+              <p className="text-sm">No transactions yet</p>
+              <p className="text-xs text-gray-500 mt-1">Your transaction history will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
             {filteredTransactions.map((tx) => (
               <div
                 key={tx.id}
@@ -250,59 +250,59 @@ export const HistoryPage = () => {
                 </div>
               </div>
             ))}
-          </div>
-         )}
-       </div>
-
-      {/* Filter Modal */}
-      {showFilterModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-hoh-card rounded-xl p-6 max-w-md w-full space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Filter Transactions</h2>
-              <button
-                onClick={() => setShowFilterModal(false)}
-                className="p-2 hover:bg-gray-700 rounded-full"
-              >
-                <ArrowLeft size={20} />
-              </button>
             </div>
+           )}
+         </div>
 
-            {/* Date Filter */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Time Period</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'all' as const, label: 'All Time' },
-                  { id: 'week' as const, label: 'Last 7 Days' },
-                  { id: 'month' as const, label: 'Last 30 Days' },
-                  { id: 'year' as const, label: 'Last 365 Days' },
-                ].map((period) => (
-                  <button
-                    key={period.id}
-                    onClick={() => setDateFilter(period.id)}
-                    className={`p-3 rounded-lg text-sm font-medium transition-colors ${
-                      dateFilter === period.id
-                        ? 'bg-hoh-green text-black'
-                        : 'bg-hoh-hover text-white hover:bg-gray-700'
-                    }`}
-                  >
-                    {period.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+       {/* Filter Modal */}
+       {showFilterModal && (
+         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+           <div className="bg-hoh-card rounded-xl p-6 max-w-md w-full space-y-4">
+             <div className="flex items-center justify-between">
+               <h2 className="text-sm font-semibold">Filter Transactions</h2>
+               <button
+                 onClick={() => setShowFilterModal(false)}
+                 className="p-2 hover:bg-gray-700 rounded-lg"
+               >
+                 <ArrowLeft size={20} />
+               </button>
+             </div>
 
-            {/* Close Button */}
-            <button
-              onClick={() => setShowFilterModal(false)}
-              className="w-full py-3 bg-hoh-green text-black rounded-xl font-bold hover:opacity-90"
-            >
-              Apply Filter
-            </button>
-          </div>
-        </div>
-      )}
-     </div>
-   );
-};
+             {/* Date Filter */}
+             <div className="space-y-2">
+               <label className="block text-sm font-medium">Time Period</label>
+               <div className="grid grid-cols-2 gap-2">
+                 {[
+                   { id: 'all' as const, label: 'All Time' },
+                   { id: 'week' as const, label: 'Last 7 Days' },
+                   { id: 'month' as const, label: 'Last 30 Days' },
+                   { id: 'year' as const, label: 'Last 365 Days' },
+                 ].map((period) => (
+                   <button
+                     key={period.id}
+                     onClick={() => setDateFilter(period.id)}
+                     className={`py-1.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                       dateFilter === period.id
+                         ? 'bg-hoh-green text-black'
+                         : 'bg-hoh-card text-white hover:bg-gray-700'
+                     }`}
+                   >
+                     {period.label}
+                   </button>
+                 ))}
+               </div>
+             </div>
+
+             {/* Close Button */}
+             <button
+               onClick={() => setShowFilterModal(false)}
+               className="w-full bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all"
+             >
+               Apply Filter
+             </button>
+           </div>
+         </div>
+       )}
+      </div>
+    );
+  };

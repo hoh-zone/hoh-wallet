@@ -106,8 +106,8 @@ export const AddTokenPage = () => {
         <h1 className="text-xl font-bold">Add Custom Token</h1>
       </div>
 
-      {/* Info Card */}
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+        {/* Info Card */}
+      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 space-y-2">
         <div className="flex items-start space-x-2">
           <AlertCircle size={16} className="text-blue-400 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-blue-400">
@@ -208,7 +208,7 @@ export const AddTokenPage = () => {
             )}
             <button
               onClick={() => setFormData(prev => ({ ...prev, logoUrl: '' }))}
-              className="p-2 bg-hoh-card rounded-full hover:bg-gray-700 text-gray-400"
+              className="p-2 bg-hoh-card text-gray-400 rounded-lg hover:bg-gray-700 transition-all"
               title="Clear logo"
             >
               <X size={16} />
@@ -251,17 +251,17 @@ export const AddTokenPage = () => {
       )}
 
       {/* Actions */}
-      <div className="flex space-x-3">
+      <div className="flex gap-3">
         <button
           onClick={() => navigate('/')}
-          className="flex-1 py-3 bg-hoh-card rounded-xl font-medium hover:bg-gray-700"
+          className="flex-1 py-2 px-4 bg-hoh-card text-white font-medium rounded-xl hover:bg-gray-700 transition-all"
         >
           Cancel
         </button>
         <button
           onClick={validateToken}
           disabled={isValidating}
-          className="flex-1 py-3 bg-hoh-green text-black rounded-xl font-bold hover:opacity-90 disabled:opacity-50"
+          className="flex-1 py-2 px-4 bg-hoh-green text-black font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
         >
           {isValidating ? 'Validating...' : 'Add Token'}
         </button>

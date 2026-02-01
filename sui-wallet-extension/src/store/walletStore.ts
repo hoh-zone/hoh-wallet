@@ -134,15 +134,21 @@ export const useWalletStore = create<WalletState>()(
           // Decrypt source for each group
           const encryptedSource = localStorage.getItem(`wallet_source_${group.id}`);
           let source = '';
+          let decrypted = null;
 
           if (encryptedSource) {
-            const decrypted = await WalletCrypto.decrypt(encryptedSource, password);
-            const parsed = JSON.parse(decrypted);
-            source = parsed.value;
+            try {
+              const decryptedStr = await WalletCrypto.decrypt(encryptedSource, password);
+              const parsed = JSON.parse(decryptedStr);
+              source = parsed.value;
+              decrypted = true;
+            } catch (e) {
+              console.error('Failed to decrypt wallet source for group:', group.id, e);
+            }
           }
 
-          // Re-derive wallets
-          const wallets = await Promise.all(group.wallets.map(async (w: any) => {
+          // Re-derive wallets only if decryption succeeded
+          const wallets = decrypted ? await Promise.all(group.wallets.map(async (w: any) => {
             let keypair: Ed25519Keypair;
             if (group.type === 'mnemonic' && w.derivationPath) {
               keypair = Ed25519Keypair.deriveKeypair(source, w.derivationPath);
@@ -155,7 +161,7 @@ export const useWalletStore = create<WalletState>()(
               keypair,
               groupId: group.id
             };
-          }));
+          })) : [];
 
           return {
             ...group,
@@ -163,6 +169,12 @@ export const useWalletStore = create<WalletState>()(
             wallets
           };
         }));
+
+        // Check if any wallet was successfully restored
+        const hasValidWallets = walletGroups.some(g => g.wallets.length > 0);
+        if (!hasValidWallets) {
+          throw new Error('Failed to restore wallets: invalid password or corrupted data');
+        }
       }
 
       set({

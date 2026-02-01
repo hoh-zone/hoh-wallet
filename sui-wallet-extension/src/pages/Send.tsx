@@ -249,7 +249,7 @@ export const SendPage = () => {
       {/* Send Button */}
       <button
         disabled={!recipient || !amount || !!error}
-        className="w-full bg-hoh-green text-black font-bold py-4 rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        className="w-full bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
       >
         <span>Send {selectedToken}</span>
       </button>
@@ -306,7 +306,7 @@ export const SendPage = () => {
                     setShowContactSelector(false);
                     navigate('/contacts');
                   }}
-                  className="w-full py-3 bg-gray-700 rounded-lg text-center text-gray-300 hover:bg-gray-600"
+                  className="w-full py-1.5 px-3 bg-hoh-card text-white font-medium rounded-lg hover:bg-gray-700 transition-all text-center"
                 >
                   View All Contacts ({contacts.length})
                 </button>

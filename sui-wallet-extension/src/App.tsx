@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useWalletStore } from './store/walletStore';
 import { BottomNav } from './components/BottomNav';
@@ -24,9 +24,11 @@ function App() {
   const { walletGroups, isLocked } = useWalletStore();
   const location = useLocation();
   const isApprovalWindow = location.hash.includes('approve') || location.pathname.includes('approve');
+  const [hasStoredWallet, setHasStoredWallet] = useState(false);
 
   useEffect(() => {
-    // This effect is no longer needed since we handle unlocking separately
+    const storedGroups = localStorage.getItem('sui_wallet_groups');
+    setHasStoredWallet(!!storedGroups);
   }, []);
 
   // If this is the approval window, we don't show the full wallet UI structure (nav, etc)
@@ -43,8 +45,13 @@ function App() {
     return <Unlock />;
   }
 
-  // If no wallet exists, show welcome screen
+  // If no wallet exists, check if there's stored data
   if (walletGroups.length === 0) {
+    // If has stored wallet groups, show unlock screen
+    if (hasStoredWallet) {
+      return <Unlock />;
+    }
+    // Otherwise show welcome screen to create/import
     return <Welcome />;
   }
 

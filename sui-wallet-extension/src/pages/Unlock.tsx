@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWalletStore } from '../store/walletStore';
-import { Lock, Eye, EyeOff } from 'lucide-react';
+import { Lock, Eye, EyeOff, Plus } from 'lucide-react';
 
 export const Unlock = () => {
-  const { unlockWallet, isLoading, logout } = useWalletStore();
+  const { unlockWallet, isLoading, logout, walletGroups } = useWalletStore();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const hasWallet = walletGroups.length > 0;
 
   const handleUnlock = async () => {
     if (!password.trim()) {
@@ -26,6 +30,11 @@ export const Unlock = () => {
     if (e.key === 'Enter') {
       handleUnlock();
     }
+  };
+
+  const handleCreateNewWallet = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -73,12 +82,24 @@ export const Unlock = () => {
           {isLoading ? 'Unlocking...' : 'Unlock Wallet'}
         </button>
 
-        <button
-          onClick={logout}
-          className="w-full bg-red-600 text-white font-medium py-3 rounded-xl hover:bg-red-700 transition-colors"
-        >
-          Reset Wallet
-        </button>
+        {!hasWallet && (
+          <>
+            <button
+              onClick={handleCreateNewWallet}
+              className="w-full bg-hoh-card text-white font-medium py-3 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2"
+            >
+              <Plus size={20} />
+              <span>Create New Wallet</span>
+            </button>
+
+            <button
+              onClick={logout}
+              className="w-full bg-red-600/20 text-red-400 font-medium py-3 rounded-xl hover:bg-red-600/30 transition-colors"
+            >
+              Reset Wallet
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

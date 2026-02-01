@@ -73,141 +73,141 @@ export const SettingsPage = () => {
   ];
 
   return (
-    <div className="p-4 space-y-6 pt-6">
+    <div className="p-3 space-y-2 pt-4">
       {/* Header */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3 mb-2">
         <button
           onClick={() => navigate('/')}
           className="p-2 hover:bg-hoh-card rounded-full"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
-        <h1 className="text-xl font-bold">{t('settings')}</h1>
+        <h1 className="text-lg font-bold">{t('settings')}</h1>
       </div>
 
-      {/* Language Setting */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Language Setting */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => setActiveSheet('language')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
-            <Globe className="text-hoh-green" size={20} />
+            <Globe className="text-hoh-green" size={18} />
             <div className="text-left">
-              <h3 className="font-medium">{t('language')}</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">{t('language')}</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 {languages.find(l => l.code === settings.language)?.name}
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
-      {/* Network Setting */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Network Setting */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => setActiveSheet('network')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
-            <Network className="text-hoh-green" size={20} />
+            <Network className="text-hoh-green" size={18} />
             <div className="text-left">
-              <h3 className="font-medium">{t('network')}</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">{t('network')}</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 {networks.find(n => n.code === settings.network)?.name}
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
-      {/* Backup Wallet */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Backup Wallet */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => navigate('/backup')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
-            <Shield className="text-hoh-green" size={20} />
+            <Shield className="text-hoh-green" size={18} />
             <div className="text-left">
-              <h3 className="font-medium">Backup Wallet</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">Backup Wallet</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 Secure your recovery phrase
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
-      {/* Security Settings */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Security Settings */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => setActiveSheet('security')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
-            <Shield className="text-hoh-green" size={20} />
+            <Shield className="text-hoh-green" size={18} />
             <div className="text-left">
-              <h3 className="font-medium">Security</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">Security</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 Passwords and trusted addresses
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
-      {/* Contacts Management */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Contacts Management */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => navigate('/contacts')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
-            <Users className="text-hoh-green" size={20} />
+            <Users className="text-hoh-green" size={18} />
             <div className="text-left">
-              <h3 className="font-medium">Contacts</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">Contacts</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 Manage your saved contacts
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
-      {/* Theme Setting */}
-      <div className="bg-hoh-card rounded-xl p-4">
+       {/* Theme Setting */}
+      <div className="bg-hoh-card rounded-lg p-3">
         <button
           onClick={() => setActiveSheet('theme')}
-          className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-hoh-hover transition-colors"
+          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-hoh-hover transition-all"
         >
           <div className="flex items-center space-x-3">
             {settings.theme === 'dark' ? (
-              <Moon className="text-hoh-green" size={20} />
+              <Moon className="text-hoh-green" size={18} />
             ) : (
-              <Sun className="text-hoh-green" size={20} />
+              <Sun className="text-hoh-green" size={18} />
             )}
             <div className="text-left">
-              <h3 className="font-medium">{t('theme')}</h3>
-              <p className="text-sm text-hoh-text-secondary">
+              <h3 className="font-medium text-sm">{t('theme')}</h3>
+              <p className="text-xs text-hoh-text-secondary">
                 {themes.find(th => th.code === settings.theme)?.name}
               </p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-hoh-text-secondary" />
+          <ChevronRight size={16} className="text-hoh-text-secondary" />
         </button>
       </div>
 
       {/* Version Info */}
-      <div className="bg-hoh-card rounded-xl p-4">
+      <div className="bg-hoh-card rounded-lg p-3 mt-4">
         <div className="text-center">
-          <h3 className="text-sm font-medium text-hoh-text-secondary">HOH Wallet</h3>
-          <p className="text-xs text-hoh-text-secondary mt-1">Version 1.0.0</p>
+          <h3 className="text-xs font-medium text-hoh-text-secondary">HOH Wallet</h3>
+          <p className="text-xs text-hoh-text-secondary mt-0.5">Version 1.0.0</p>
         </div>
       </div>
 

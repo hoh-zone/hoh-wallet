@@ -168,14 +168,14 @@ export const ContactsPage = () => {
           <button
             onClick={handleExportContacts}
             disabled={contacts.length === 0}
-            className="p-2 hover:bg-hoh-card rounded-full disabled:opacity-50"
+            className="p-2 hover:bg-hoh-card rounded-lg disabled:opacity-50"
             title="Export Contacts"
           >
             <Download size={20} />
           </button>
           <button
             onClick={() => setShowAddSheet(true)}
-            className="p-2 bg-hoh-green rounded-full hover:opacity-90 text-black"
+            className="p-2 bg-hoh-green text-black rounded-lg hover:opacity-90 transition-all"
             title="Add Contact"
           >
             <Plus size={20} />
@@ -198,15 +198,15 @@ export const ContactsPage = () => {
       {/* Contacts List */}
       <div className="space-y-4">
         {filteredContacts.length === 0 ? (
-          <div className="bg-hoh-card rounded-xl p-8 text-center">
+          <div className="bg-hoh-card rounded-xl p-4 text-center">
             <AlertCircle size={48} className="mx-auto mb-3 text-gray-400" />
-            <h3 className="text-lg font-bold mb-2">No Contacts Found</h3>
-            <p className="text-gray-400 mb-4">
+            <h3 className="text-sm font-semibold mb-2">No Contacts Found</h3>
+            <p className="text-sm text-gray-500 mb-4">
               {searchQuery ? 'No contacts match your search' : 'Add your first contact to get started'}
             </p>
             <button
               onClick={() => setShowAddSheet(true)}
-              className="bg-hoh-green text-black font-bold py-3 px-6 rounded-xl hover:opacity-90"
+              className="bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all"
             >
               Add Contact
             </button>
@@ -216,7 +216,7 @@ export const ContactsPage = () => {
             {/* Favorites */}
             {favorites.length > 0 && (
               <>
-                <h2 className="text-lg font-bold text-gray-400 mb-3">Favorites</h2>
+                <h2 className="text-sm font-semibold text-gray-400 mb-2">Favorites</h2>
                 <div className="space-y-2">
                   {favorites.map(contact => (
                     <div key={contact.id} className="bg-hoh-card rounded-xl p-4">
@@ -235,7 +235,7 @@ export const ContactsPage = () => {
                         </div>
                         <button
                           onClick={() => toggleFavorite(contact.id)}
-                          className="p-2 hover:bg-gray-700 rounded-full"
+                          className="p-2 hover:bg-gray-700 rounded-lg"
                           title="Toggle favorite"
                         >
                           <Star size={16} className={contact.isFavorite ? 'text-yellow-400 fill-yellow-400' : 'text-gray-400'} fill={contact.isFavorite ? 'currentColor' : 'none'} />
@@ -250,7 +250,7 @@ export const ContactsPage = () => {
             {/* Others */}
             {others.length > 0 && (
               <>
-                <h2 className="text-lg font-bold text-gray-400 mb-3">All Contacts</h2>
+                <h2 className="text-sm font-semibold text-gray-400 mb-2">All Contacts</h2>
                 <div className="space-y-2">
                   {others.map(contact => (
                     <div key={contact.id} className="bg-hoh-card rounded-xl p-4">
@@ -269,7 +269,7 @@ export const ContactsPage = () => {
                         </div>
                         <button
                           onClick={() => toggleFavorite(contact.id)}
-                          className="p-2 hover:bg-gray-700 rounded-full"
+                          className="p-2 hover:bg-gray-700 rounded-lg"
                           title="Add to favorites"
                         >
                           <StarOff size={16} className="text-gray-400" />
@@ -335,20 +335,20 @@ export const ContactsPage = () => {
             </div>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex gap-3">
             <button
               onClick={() => {
                 setShowAddSheet(false);
                 resetForm();
               }}
-              className="flex-1 py-3 bg-hoh-card rounded-xl font-medium hover:bg-gray-700"
+              className="flex-1 py-2 px-4 bg-hoh-card text-white font-medium rounded-xl hover:bg-gray-700 transition-all"
             >
               Cancel
             </button>
             <button
               onClick={editingContact ? handleUpdateContact : handleAddContact}
               disabled={!formData.name || !formData.address}
-              className="flex-1 py-3 bg-hoh-green text-black rounded-xl font-bold hover:opacity-90 disabled:opacity-50"
+              className="flex-1 py-2 px-4 bg-hoh-green text-black font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
             >
               {editingContact ? 'Update' : 'Add'}
             </button>
@@ -383,7 +383,7 @@ export const ContactsPage = () => {
 
           <button
             onClick={() => setShowImportSheet(false)}
-            className="w-full py-3 bg-hoh-card rounded-xl font-medium hover:bg-gray-700"
+            className="w-full py-2 px-4 bg-hoh-card text-white font-medium rounded-xl hover:bg-gray-700 transition-all"
           >
             Cancel
           </button>

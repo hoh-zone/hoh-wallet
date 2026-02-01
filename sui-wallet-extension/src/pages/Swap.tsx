@@ -167,10 +167,10 @@ export const Swap = () => {
       </div>
 
       {/* Swap Trigger */}
-      <div className="flex justify-center -my-3 z-10 relative">
-        <button 
+        <div className="flex justify-center -my-3 z-10 relative">
+        <button
           onClick={handleSwitchTokens}
-          className="bg-hoh-card border-4 border-black p-2 rounded-xl hover:text-hoh-green transition-colors"
+          className="bg-hoh-card border-4 border-black p-2 rounded-lg hover:text-hoh-green transition-all"
         >
           <ArrowDown size={20} />
         </button>
@@ -230,7 +230,7 @@ export const Swap = () => {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isLoading || !fromAmount || !quote}
-        className="w-full bg-white text-black font-bold py-4 rounded-xl text-lg hover:bg-gray-100 disabled:opacity-50 mt-4 transition-colors"
+        className="w-full bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 mt-4"
       >
         {isFetchingQuote ? (
           <span className="flex items-center justify-center space-x-2">
@@ -281,14 +281,14 @@ export const Swap = () => {
           <div className="flex space-x-3">
             <button
               onClick={() => setShowConfirm(false)}
-              className="flex-1 py-3 bg-hoh-card rounded-xl font-medium hover:bg-hoh-hover"
+              className="flex-1 py-2 px-4 bg-hoh-card text-white font-medium rounded-xl hover:bg-gray-700 transition-all"
             >
               Cancel
             </button>
             <button
               onClick={handleSwap}
               disabled={isLoading}
-              className="flex-1 py-3 bg-hoh-green text-black rounded-xl font-bold hover:opacity-90 disabled:opacity-50"
+              className="flex-1 py-2 px-4 bg-hoh-green text-black font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
             >
               {isLoading ? 'Swapping...' : 'Confirm Swap'}
             </button>

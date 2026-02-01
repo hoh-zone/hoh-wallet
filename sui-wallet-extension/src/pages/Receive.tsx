@@ -119,7 +119,7 @@ export const ReceivePage = () => {
             </div>
             <button
               onClick={handleCopyAddress}
-              className="w-full flex items-center justify-center space-x-2 bg-hoh-green text-black py-2 rounded-lg font-medium hover:opacity-90 transition-colors"
+              className="w-full flex items-center justify-center space-x-2 bg-hoh-green text-black font-bold py-2 px-4 rounded-xl hover:opacity-90 transition-all"
             >
               {copied ? (
                 <>
@@ -140,7 +140,7 @@ export const ReceivePage = () => {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={handleDownloadQR}
-            className="flex items-center justify-center space-x-2 bg-hoh-hover text-white py-3 rounded-xl font-medium hover:bg-gray-700 transition-colors"
+            className="flex items-center justify-center space-x-2 bg-hoh-card text-white font-medium py-2 px-4 rounded-xl hover:bg-gray-700 transition-all"
           >
             <Download size={18} />
             <span>Save QR</span>
@@ -148,7 +148,7 @@ export const ReceivePage = () => {
           {typeof navigator.share === 'function' && (
             <button
               onClick={handleShare}
-              className="flex items-center justify-center space-x-2 bg-hoh-hover text-white py-3 rounded-xl font-medium hover:bg-gray-700 transition-colors"
+              className="flex items-center justify-center space-x-2 bg-hoh-card text-white font-medium py-2 px-4 rounded-xl hover:bg-gray-700 transition-all"
             >
               <Share2 size={18} />
               <span>Share</span>
